@@ -1,0 +1,8 @@
+- hosts: ubuntua-server
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: install java
+      apt: 
+        name: openjdk-11-jre-headless
+        state: present

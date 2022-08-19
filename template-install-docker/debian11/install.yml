@@ -1,0 +1,25 @@
+- hosts: jenkins
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: update
+      shell: apt-get update
+    - name: install dependencies required by docker
+      shell: apt -y install apt-transport-https ca-certificates curl gnupg2 software-properties-common
+    - name: add docker official
+      shell: curl -fsSL https://download.docker.com/linux/debian/gpg | gpg --dearmor -o /usr/share/keyrings/docker-archive-keyring.gpg
+    - name: add stable repository
+      shell: echo "deb [arch=amd64 signed-by=/usr/share/keyrings/docker-archive-keyring.gpg] https://download.docker.com/linux/debian $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list
+    - name: Update Package Cache     
+      shell: apt-get update
+    - name: install docker engine
+      shell: apt-get install docker-ce  -y
+    - name: install docker engine 2
+      shell: apt-get install docker-ce-cli -y
+    - name: install docker engine
+      shell: apt-get install  containerd.io -y 
+    - name: cek docker version
+      shell: docker --version
+    - name: give permission on docker
+      shell: chown anonimpc:anonimpc /var/run/docker.sock
+      

@@ -1,0 +1,85 @@
+#if you got error you must running gradlew jar the first
+# http://linyongchao.github.io/2021/07/26/kafka/
+# browser to kafka directory and then running the command below
+# ./gradlew jar -PscalaVersion=2.13.6
+# see the instalation of kafka I folowing this guide but I implement it to the ansible for easy me build automaticaly
+# https://tecadmin.net/how-to-install-apache-kafka-on-ubuntu-20-04/
+# this guide https://kafka.apache.org/documentation/ has complated
+
+- hosts: ubuntua-server
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: install default-jdk
+      apt:
+        name: default-jdk
+        state: present
+        force: yes
+        
+    - name: install java
+      apt: 
+        name: openjdk-11-jre-headless
+        state: present
+  
+    - name: "download kafka"
+      shell: wget https://dlcdn.apache.org/kafka/3.1.0/kafka-3.1.0-src.tgz
+  
+    - name: Check file data
+      stat:
+        path: "/usr/local/kafka"
+      register: file_data
+  
+    # make the condition here
+    - name: Report if file exists
+      debug:
+        msg: "The File or directory exists"
+      when: file_data.stat.exists   
+  
+    - name:  tar kafka
+      shell: tar xzf kafka-3.1.0-src.tgz && mv kafka-3.1.0-src /usr/local/kafka
+      when: not file_data.stat.exists
+
+    - name: install gradle
+      apt:
+        name: gradle
+        state: present
+
+    ## copy zookeeper file on my local machine to server directory /etc/systemd/system/
+    - name: systemd create for zookeeper service
+      template: src=zookeeper.service dest=/etc/systemd/system/zookeeper.service mode=644
+      notify:
+        - reload systemctl
+    
+    ## copy zookeeper file on my local kafka to server directory /etc/systemd/system/
+    - name: systemd create for kafka service
+      template: src=kafka.service dest=/etc/systemd/system/kafka.service mode=644
+      notify:
+        - reload systemctl
+
+    - name: zookeper | Start zookeeper
+      service: name=zookeeper.service state=started enabled=yes
+
+    - name: kafka | Start Kafka
+      service: name=kafka.service state=started enabled=yes
+    
+
+# create topic
+# bin/kafka-topics.sh --create --topic quickstart-events --bootstrap-server localhost:9092
+
+# describe topic 
+# bin/kafka-topics.sh --describe --topic my-topic --bootstrap-server localhost:9092
+
+# WRITE SOME EVENTS INTO THE TOPIC
+# open console on terminal 
+#  bin/kafka-console-producer.sh --topic my-topic --bootstrap-server localhost:9092
+# hafka apa kabar?
+# halo ?
+
+
+# READ THE EVENTS
+# open console to another consumer
+# bin/kafka-console-consumer.sh --topic quickstart-events --from-beginning --bootstrap-server localhost:9092
+
+
+# backup kafka and zookeeper
+# https://www.digitalocean.com/community/tutorials/how-to-back-up-import-and-migrate-your-apache-kafka-data-on-ubuntu-18-04

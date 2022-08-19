@@ -1,0 +1,24 @@
+- hosts: master-kubernetes
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: Remove Containerd
+      apt:
+        pkg: containerd
+        state: absent
+      become: yes
+    - name: Remove Docker
+      apt:
+        pkg: docker.io
+        state: absent
+      become: yes
+    - name: Remove Kubelet
+      apt:
+        pkg: kubelet
+        state: absent
+      become: yes
+    - name: Remove Kubeadm
+      apt:
+        pkg: kubeadm
+        state: absent
+      become: yes

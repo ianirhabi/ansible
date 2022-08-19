@@ -1,0 +1,82 @@
+# for execute this script by ansible just run command
+# ansible-playbook install.yml --ask-become-pass
+
+- hosts: ubuntua-server
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: Envoy requires some dependencies
+      shell: apt install apt-transport-https && apt install gnupg2 && apt install curl && apt install lsb-release -y
+      become: yes
+
+    #check
+    - name: Check file data
+      stat:
+        path: "/usr/share/keyrings/getenvoy-keyring.gpg"
+      register: file_data
+
+    - name: Report if file exists
+      debug:
+        msg: "The File or directory exists"
+      when: file_data.stat.exists
+
+    - name: Import GPG key when file not exists
+      shell: curl -sL 'https://deb.dl.getenvoy.io/public/gpg.8115BA8E629CC074.key' | sudo gpg --dearmor -o /usr/share/keyrings/getenvoy-keyring.gpg 
+      become: yes
+      when: not file_data.stat.exists
+
+    - name: verify if the key is signed
+      shell: echo a077cb587a1b622e03aa4bf2f3689de14658a9497a9af2c427bba5f4cc3c4723 /usr/share/keyrings/getenvoy-keyring.gpg | sha256sum --check 
+      become: yes
+
+    - name: need to add the key 
+      shell: echo "deb [arch=amd64 signed-by=/usr/share/keyrings/getenvoy-keyring.gpg] https://deb.dl.getenvoy.io/public/deb/ubuntu $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/getenvoy.list 
+      become: yes
+
+    - name: update
+      shell: apt update
+
+    - name: Install envoy proxy
+      apt: 
+        name: getenvoy-envoy
+        state: present
+
+    - name: check version
+      shell: envoy --version
+      become: yes
+
+
+    # - name: enable docker service
+    #   shell: systemctl enable docker.service
+    
+    # - name: run docker service
+    #   shell: systemctl start docker.service
+    
+    # - name: initialize the cluster
+    #   shell: kubeadm init --pod-network-cidr=10.244.0.0/16 >> cluster_initialized.txt
+    #   args:
+    #     chdir: $HOME
+    #     creates: cluster_initialized.txt
+
+    # - name: create .kube directory
+    #   become: yes
+    #   become_user: ubuntu
+    #   file:
+    #     path: $HOME/.kube
+    #     state: directory
+    #     mode: 0755
+
+    # - name: copy admin.conf to user's kube config
+    #   copy:
+    #     src: /etc/kubernetes/admin.conf
+    #     dest: /home/ubuntu/.kube/config
+    #     remote_src: yes
+    #     owner: ubuntu
+
+    # - name: install Pod network
+    #   become: yes
+    #   become_user: ubuntu
+    #   shell: kubectl apply -f https://raw.githubusercontent.com/coreos/flannel/master/Documentation/kube-flannel.yml >> pod_network_setup.txt
+    #   args:
+    #     chdir: $HOME
+    #     creates: pod_network_setup.txt
