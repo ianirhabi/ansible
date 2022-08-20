@@ -1,4 +1,4 @@
-- hosts: jenkins
+- hosts: jenkins-agent
   become: yes
   become_method: sudo
   tasks:

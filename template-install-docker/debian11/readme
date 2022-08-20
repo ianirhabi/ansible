@@ -3,3 +3,6 @@ ansible-playbook install.yml --ask-become-pass
 
 and install python on server
 apt install python
+
+konfigurasi ansible 
+nano /etc/ansible/hosts
