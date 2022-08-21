@@ -1,4 +1,4 @@
-- hosts: master-kubernetes
+- hosts: ovh
   become: yes
   become_method: sudo
   tasks:

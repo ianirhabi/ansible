@@ -1,0 +1,14 @@
+ansible-playbook install1.yml --ask-become-pass
+
+jika pakai inventory custom eksekusi dengan ini
+ansible-playbook -i inventory.yml install1.yml --ask-become-pass
+
+
+mkdir /etc/ansible
+nano /etc/ansible/hosts
+isikan dengan ini ke dalam file hosts 
+[ubuntu-server]
+192.168.11.57 ansible_ssh_user=ubuntu ansible_ssh_private_key_file=/home/anonimpc/.ssh/id_rsa
+
+cek dengan
+ansible ovh-server -m ping

@@ -18,46 +18,62 @@
         }
    
    - name: install containerd
+     vars:
+       ansible_python_interpreter: /usr/bin/python2
      apt:
        name: containerd
        state: present
   
    - name: install Docker
+     vars:
+       ansible_python_interpreter: /usr/bin/python2
      apt:
        name: docker.io
        state: present
        update_cache: true
 
    - name: install APT Transport HTTPS
+     vars:
+       ansible_python_interpreter: /usr/bin/python2
      apt:
        name: apt-transport-https
        state: present
 
    - name: add Kubernetes apt-key
+     vars:
+       ansible_python_interpreter: /usr/bin/python2
      apt_key:
        url: https://packages.cloud.google.com/apt/doc/apt-key.gpg
        state: present
 
    - name: add Kubernetes' APT repository
+     vars:
+       ansible_python_interpreter: /usr/bin/python2
      apt_repository:
       repo: deb http://apt.kubernetes.io/ kubernetes-xenial main
       state: present
       filename: 'kubernetes'
 
    - name: install kubelet
+     vars:
+       ansible_python_interpreter: /usr/bin/python2
      apt:
-       name: kubelet=1.23.4-00
+       name: kubelet=1.24.4-00
        state: present
        update_cache: true
 
    - name: install kubeadm
+     vars:
+       ansible_python_interpreter: /usr/bin/python2
      apt:
-       name: kubeadm=1.23.4-00
+       name: kubeadm=1.24.4-00
        state: present
        
    - name: install kubectl
+     vars:
+       ansible_python_interpreter: /usr/bin/python2
      apt:
-       name: kubectl=1.23.4-00
+       name: kubectl=1.24.4-00
        state: present
        force: yes
 
