@@ -2,6 +2,7 @@ ansible-playbook install1.yml --ask-become-pass
 
 jika pakai inventory custom eksekusi dengan ini
 ansible-playbook -i inventory.yml install1.yml --ask-become-pass
+ansible-playbook  -i /etc/ansible/hosts install1.yml --ask-become-pass
 
 
 mkdir /etc/ansible
@@ -12,3 +13,8 @@ isikan dengan ini ke dalam file hosts
 
 cek dengan
 ansible ovh-server -m ping
+$ ansible ubuntu-server -m ping
+$ ansible ubuntu-server -a "free -m"
+$ ansible ubuntu-server -a "hostname && uname -a"
+$ ansible ubuntu-server -a "ps ax | grep python"
+$ ansible ubuntu-server -a "touch ~/README.txt"
